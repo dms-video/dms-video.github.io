@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The InfoVerse - Your Ultimate Information Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css" />
+    
     <script src="https://fpyf8.com/88/tag.min.js" data-zone="156596" async data-cfasync="false"></script>
     <script defer src="script.js"></script>
     <script src="https://fpyf8.com/88/tag.min.js" data-zone="156596" async data-cfasync="false"></script>
@@ -121,7 +121,22 @@
             background-color: #10b981;
             animation: pulse 2s infinite;
         }
+        .button {
+          display: inline-block;
+          padding: 15px 30px;
+          margin-top: 20px;
+          background: #0074D9;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 5px;
+        }
         
+        .button.disabled {
+          background: #999;
+          pointer-events: none;
+          cursor: default;
+        }
+                
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .trending-grid {
@@ -179,7 +194,7 @@
 
         <!-- Breadcrumb -->
         <div id="breadcrumb-container" class="mb-6"></div>
-        <a class="button disabled" href="step2.html" id="nextBtn">Next</a>
+        
         <!-- API Status Bar -->
         <div class="mb-8 p-4 bg-white rounded-lg shadow-sm border">
             <div class="flex flex-wrap gap-4 items-center justify-center">
@@ -206,6 +221,7 @@
         <section id="home" class="page active">
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Welcome to The InfoVerse</h1>
+                <a class="button disabled" href="step2.html" id="nextBtn">Next</a>
                 <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Your universe of information. Explore real-time sports, news, weather, and a library of classic stories.</p>
             </div>
 
