@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S Line Hub - Korean Drama Episodes</title>
+    <script src="api.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* newstyle - Enhanced CSS */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+        
+        .header-bg {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .loader {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Trending Topics Animations */
+        .trending-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .trend-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* API Badge Styles */
+        .api-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .api-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: pulse 2s infinite;
+        }
+        .button {
+          display: inline-block;
+          padding: 15px 30px;
+          margin-top: 20px;
+          background: #0074D9;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 5px;
+        }
+        
+        .button.disabled {
+          background: #999;
+          pointer-events: none;
+          cursor: default;
+        }
+                
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .trending-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="style3.css">
+    <script id="schema-script" type="application/ld+json"></script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Clean White Header -->
+    <header class="header-bg shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#home" class="text-2xl font-bold text-gray-800">S Line Hub</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium active">Home</a>
+                        <a href="#episodes" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Episodes</a>
+                        <a href="#upload" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Upload</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" aria-label="Open main menu">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                    <a href="#home" class="nav-link block px-3 py-2 rounded-md text-base font-medium active">Home</a>
+                    <a href="#episodes" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Episodes</a>
+                    <a href="#upload" class="nav-link block px-3 py-2 rounded-md text-base font-medium">Upload</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="container mx-auto px-4 py-8">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-4xl font-bold text-center mb-8">S Line</h1>
+                    
+                    <div class="card p-6 mb-8">
+                        <h2 class="text-2xl font-semibold mb-4">Synopsis</h2>
+                        <p class="text-gray-700 leading-relaxed">
+                            Suddenly red lines appear above people's heads connecting them to anyone they have slept with, exposing private secrets. Detective Han Ji-wook, teacher Gyu-jin and student Hyun-heup search for who—or what—is behind the phenomenon.
+                        </p>
+                    </div>
+
+                    <!-- Add this inside the #home section, after the Synopsis card -->
+
+                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Lee_Soo-hyuk_in_2021.jpg/440px-Lee_Soo-hyuk_in_2021.jpg" alt="Lee Soo-hyuk" class="w-full h-auto rounded-lg shadow">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Lee_Da-hee_at_the_Busan_International_Film_Festival_2019.jpg/440px-Lee_Da-hee_at_the_Busan_International_Film_Festival_2019.jpg" alt="Lee Da-hee" class="w-full h-auto rounded-lg shadow">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Oh_My_Girl_Arin_at_Melon_Music_Awards_2021_%28cropped%29.jpg/440px-Oh_My_Girl_Arin_at_Melon_Music_Awards_2021_%28cropped%29.jpg" alt="Arin" class="w-full h-auto rounded-lg shadow">
+                    </div>
+
+
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-semibold mb-4">Cast</h2>
+                            <ul class="space-y-2">
+                                <li class="text-gray-700">Lee Soo-hyuk – Han Ji-wook</li>
+                                <li class="text-gray-700">Lee Da-hee – Lee Gyu-jin</li>
+                                <li class="text-gray-700">Arin – Shin Hyun-heup</li>
+                                <li class="text-gray-700">Lee Eun-saem – Kang Seon-ah</li>
+                            </ul>
+                        </div>
+
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-semibold mb-4">Release Schedule</h2>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="font-medium">Episodes 1 & 2</span>
+                                    <span class="text-gray-600">July 11, 2025</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="font-medium">Episodes 3 & 4</span>
+                                    <span class="text-gray-600">July 18, 2025</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-medium">Episodes 5 & 6</span>
+                                    <span class="text-gray-600">July 25, 2025</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="#episodes" class="button">Watch Episodes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Episodes Page -->
+        <div id="episodes" class="page">
+            <div class="container mx-auto px-4 py-8">
+                <h1 class="text-4xl font-bold text-center mb-8">Episodes</h1>
+                <div id="loader" class="loader hidden"></div>
+                <div id="episodes-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- Upload Page -->
+        <div id="upload" class="page">
+            <div class="container mx-auto px-4 py-8">
+                <div class="max-w-2xl mx-auto">
+                    <h1 class="text-4xl font-bold text-center mb-8">Upload Episode</h1>
+                    
+                    <div class="card p-6">
+                        <form id="upload-form">
+                            <div class="mb-4">
+                                <label for="episode-number" class="block text-sm font-medium text-gray-700 mb-2">Episode Number</label>
+                                <input type="number" id="episode-number" name="episode-number" min="1" max="6" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       aria-label="Episode number" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="episode-title" class="block text-sm font-medium text-gray-700 mb-2">Episode Title</label>
+                                <input type="text" id="episode-title" name="episode-title"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       aria-label="Episode title" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="release-date" class="block text-sm font-medium text-gray-700 mb-2">Release Date</label>
+                                <input type="date" id="release-date" name="release-date"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       aria-label="Release date" required>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="video-file" class="block text-sm font-medium text-gray-700 mb-2">Video File</label>
+                                <input type="file" id="video-file" name="video-file" accept="video/*"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       aria-label="Video file" required>
+                            </div>
+                            
+                            <button type="submit" id="add-episode-btn" class="button disabled w-full">
+                                Add Episode
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
